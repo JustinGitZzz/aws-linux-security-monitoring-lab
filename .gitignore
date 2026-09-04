@@ -1,0 +1,15 @@
+# Private keys
+*.pem
+*.key
+
+# Credentials and secrets
+.env
+credentials
+secrets
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
