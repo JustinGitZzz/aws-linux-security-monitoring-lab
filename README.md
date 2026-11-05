@@ -38,14 +38,14 @@ repository, and private key file types are excluded through
 
 ## SSH Server Hardening
 
-• Reviewed the effective OpenSSH configuration
-• Backed up the existing configuration before modification
-• Disabled password-based SSH authentication
-• Disabled direct root SSH login
-• Explicitly retained public-key authentication
-• Validated the configuration before reloading SSH
-• Verified key-based access from a second SSH session
-• Tested that password authentication and root login were rejected
+- Reviewed the effective OpenSSH configuration
+- Backed up the existing configuration before modification
+- Disabled password-based SSH authentication
+- Disabled direct root SSH login
+- Explicitly retained public-key authentication
+- Validated the configuration before reloading SSH
+- Verified key-based access from a second SSH session
+- Tested that password authentication and root login were rejected
 
 ```text
 PasswordAuthentication no
