@@ -152,4 +152,4 @@ At the host level, OpenSSH is hardened by disabling password authentication and 
 
 ### Security Group Evidence
 
-![Restricted SSH inbound rule](screenshots/security-group-ssh.png)
+![Restricted SSH inbound rule](screenshots/ec2-deployment/security-group-ssh-rule.png)
