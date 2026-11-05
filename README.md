@@ -51,13 +51,13 @@ repository, and private key file types are excluded through
 PasswordAuthentication no
 ```
 
-If SSH accepts passwords, an attacker can repeatedly try username/password combinations against the server. Disabling password authentication removes that login method, so knowing or guessing the account's password isn't enough to SSH into the server. Your server instead relies on possession of the appropriate private key.
+If SSH accepts passwords, an attacker can repeatedly try username/password combinations against the server. Disabling password authentication removes that login method, so knowing or guessing the account's password isn't enough to SSH into the server. The server instead relies on possession of the appropriate private key.
 
 ```text
 PermitRootLogin no
 ```
 
-`root` has essentially unrestricted administrative control over a Linux system. Disabling direct root SSH login means someone cannot remotely authenticate directly as `root`. You instead log in using a normal account such as `ubuntu` and elevate privileges with `sudo` when necessary.
+`root` has essentially unrestricted administrative control over a Linux system. Disabling direct root SSH login means someone cannot remotely authenticate directly as `root`. I instead log in using a normal account such as `ubuntu` and elevate privileges with `sudo` when necessary.
 
 ```text
 PubkeyAuthentication yes
@@ -91,3 +91,65 @@ Public-key authentication  ✅
         ↓
   sudo when needed
 ```
+
+## AWS Security Group Hardening
+
+1. Least priveledge
+Least privilege means allowing only the access necessary to perform a task and nothing more.
+
+For the EC2 server, SSH is needed for remote administration, so I allow:
+`TCP 22`
+
+But instead of allowing the entire internet:
+`0.0.0.0/0   ❌`
+
+I restrict it to:
+
+`Administrator's public IP/32   ✅`
+
+A /32 represents one IPv4 address. Therefore, I am not exposing SSH to every internet address when only my administrative connection needs access.
+
+2. Network-level control
+My AWS Security Group is the network-level control.
+
+Traffic effectively encounters this control before it can reach SSH on my EC2 instance:
+```text
+Internet
+   ↓
+AWS Security Group
+   ↓
+Is TCP 22 permitted from this source IP?
+   ↓
+EC2 instance
+```
+
+If someone connects from an IP that isn't permitted by the Security Group, the SSH service doesn't get an allowed inbound connection through that rule.
+
+The rule therefore provides a network-layer restriction:
+```text
+SSH
+TCP
+22
+[ADMIN-IP]/32
+```
+3. Host-level control
+Once permitted traffic reaches the EC2 instance, OpenSSH (sshd) provides another layer of controls on the Linux host.
+
+That's where the settings I configured matter:
+```text
+PasswordAuthentication no
+PermitRootLogin no
+PubkeyAuthentication yes
+```
+
+So even an SSH connection permitted through the Security Group still has to satisfy the SSH authentication policy.
+
+### Defense in Depth
+
+The server uses multiple layers of security rather than relying on a single control. At the network level, the AWS Security Group permits SSH traffic on TCP port 22 only from the administrator's authorized public IP address using a `/32` CIDR restriction.
+
+At the host level, OpenSSH is hardened by disabling password authentication and direct `root` login while retaining public-key authentication. Together, these controls reduce unnecessary network exposure and strengthen authentication for remote administrative access.
+
+### Security Group Evidence
+
+![Restricted SSH inbound rule](screenshots/security-group-ssh.png)
