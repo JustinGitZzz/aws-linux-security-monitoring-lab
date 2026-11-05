@@ -35,3 +35,55 @@ repository, and private key file types are excluded through
 #### Security Group
 
 ![Security Group](screenshots/ec2-deployment/security-group-ssh-rule.png)
+
+## SSH Server Hardening
+
+• Reviewed the effective OpenSSH configuration
+• Backed up the existing configuration before modification
+• Disabled password-based SSH authentication
+• Disabled direct root SSH login
+• Explicitly retained public-key authentication
+• Validated the configuration before reloading SSH
+• Verified key-based access from a second SSH session
+• Tested that password authentication and root login were rejected
+
+```text
+PasswordAuthentication no
+```
+
+If SSH accepts passwords, an attacker can repeatedly try username/password combinations against the server. Disabling password authentication removes that login method, so knowing or guessing the account's password isn't enough to SSH into the server. Your server instead relies on possession of the appropriate private key.
+
+```text
+PermitRootLogin no
+```
+
+`root` has essentially unrestricted administrative control over a Linux system. Disabling direct root SSH login means someone cannot remotely authenticate directly as `root`. You instead log in using a normal account such as `ubuntu` and elevate privileges with `sudo` when necessary.
+
+```text
+PubkeyAuthentication yes
+```
+
+The EC2 server accepts SSH public-key authentication. The server has the authorized public key, while you keep the corresponding private `.pem` key on your computer. When you connect, SSH uses cryptography to prove you possess the private key without transmitting the private key to the server.
+
+This setup essentially changes remote administration from:
+
+Internet
+   ↓
+SSH
+   ↓
+Username + password ❌
+Direct root login   ❌
+
+to:
+
+Your authorized IP (/32)
+          ↓
+       TCP 22
+          ↓
+         SSH
+          ↓
+Public-key authentication ✅
+          ↓
+     ubuntu account
+          ↓
+     sudo when needed

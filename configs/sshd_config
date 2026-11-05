@@ -1,0 +1,7 @@
+# SSH authentication hardening
+# Sanitized excerpt documenting security-relevant settings.
+# This is not a complete production sshd_config.
+
+PasswordAuthentication no
+PermitRootLogin no
+PubkeyAuthentication yes
