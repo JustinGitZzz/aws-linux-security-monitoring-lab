@@ -65,25 +65,29 @@ PubkeyAuthentication yes
 
 The EC2 server accepts SSH public-key authentication. The server has the authorized public key, while you keep the corresponding private `.pem` key on your computer. When you connect, SSH uses cryptography to prove you possess the private key without transmitting the private key to the server.
 
-This setup essentially changes remote administration from:
+This setup changes remote administration from:
 
+```text
 Internet
    ↓
 SSH
    ↓
-Username + password ❌
-Direct root login   ❌
+Username + password  ❌
+Direct root login    ❌
+```
 
 to:
 
-Your authorized IP (/32)
-          ↓
-       TCP 22
-          ↓
-         SSH
-          ↓
-Public-key authentication ✅
-          ↓
-     ubuntu account
-          ↓
-     sudo when needed
+```text
+Authorized IP (/32)
+        ↓
+     TCP 22
+        ↓
+       SSH
+        ↓
+Public-key authentication  ✅
+        ↓
+   ubuntu account
+        ↓
+  sudo when needed
+```
