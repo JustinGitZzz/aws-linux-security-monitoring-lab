@@ -91,6 +91,8 @@ Public-key authentication  ✅
         ↓
   sudo when needed
 ```
+![SSH Hardened Configuration](screenshots/ssh-hardening/ssh-hardened-config.png)
+![Password authentication being denied](screenshots/ssh-hardening/password-auth-denied.png)
 
 ## AWS Security Group Hardening
 
@@ -153,3 +155,35 @@ At the host level, OpenSSH is hardened by disabling password authentication and 
 ### Security Group Evidence
 
 ![Restricted SSH inbound rule](screenshots/ec2-deployment/security-group-ssh-rule.png)
+
+## Restricted SFTP-Only User Configuration
+
+A dedicated `sftpuser` account was created for secure file transfers without providing access to a standard interactive Linux shell. The account is assigned to the `sftpusers` group and uses key-based authentication.
+
+The SFTP environment is isolated using `ChrootDirectory`, restricting the user to its designated directory structure. The chroot directory is owned by `root` to satisfy OpenSSH security requirements, while a separate `uploads` directory provides the SFTP user with the permissions required for file transfers.
+
+OpenSSH applies the following restrictions to members of the `sftpusers` group:
+
+```text
+Match Group sftpusers
+    ChrootDirectory %h
+    ForceCommand internal-sftp
+    AuthorizedKeysFile /etc/ssh/authorized_keys/%u
+```
+
+`ForceCommand internal-sftp` prevents the account from obtaining a normal interactive shell and restricts it to the SFTP subsystem. Public keys are stored in a root-controlled location outside the chroot environment.
+
+### Security Rationale
+
+The configuration follows the principle of **least privilege**. A file-transfer account does not require general shell access or administrative capabilities, so the account is limited to only the functionality required for transferring files.
+
+The configuration provides:
+
+- **SFTP-only access** — the account cannot obtain an interactive SSH shell.
+- **Chroot isolation** — the user is restricted to its designated filesystem environment.
+- **Key-based authentication** — access requires possession of the corresponding private key.
+- **Controlled write access** — the chroot root remains controlled by `root`, while `sftpuser` can write only to the designated `uploads` directory.
+- **Separation of privileges** — the SFTP account cannot perform the administrative tasks available to the `ubuntu` account.
+
+![Interactive Shell Denied](screenshots/sftp/interactive-shell-denied)
+![SFTP Success](screenshots/sftp/sftp-transfer-success)

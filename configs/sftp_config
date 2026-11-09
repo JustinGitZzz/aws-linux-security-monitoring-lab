@@ -1,0 +1,10 @@
+# Restricted SFTP user configuration
+
+Match Group sftpusers
+    ChrootDirectory %h
+    ForceCommand internal-sftp
+    AuthorizedKeysFile /etc/ssh/authorized_keys/%u
+    PermitTunnel no
+    AllowAgentForwarding no
+    AllowTcpForwarding no
+    X11Forwarding no
