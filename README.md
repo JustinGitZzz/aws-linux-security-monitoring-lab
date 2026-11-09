@@ -185,5 +185,5 @@ The configuration provides:
 - **Controlled write access** — the chroot root remains controlled by `root`, while `sftpuser` can write only to the designated `uploads` directory.
 - **Separation of privileges** — the SFTP account cannot perform the administrative tasks available to the `ubuntu` account.
 
-![Interactive Shell Denied](screenshots/sftp/interactive-shell-denied)
-![SFTP Success](screenshots/sftp/sftp-transfer-success)
+![Interactive Shell Denied](screenshots/sftp/interactive-shell-denied.png)
+![SFTP Success](screenshots/sftp/sftp-transfer-success.png)
