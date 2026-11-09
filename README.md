@@ -198,3 +198,49 @@ The configuration provides:
 ### SFTP Success
 
 ![SFTP Success](screenshots/sftp/sftp-transfer-success.png)
+
+## Linux Security Auditing with `auditd`
+
+Configured Linux Audit (`auditd`) to monitor security-sensitive identity and SSH configuration files. Persistent audit rules were created to detect write operations and attribute changes to `/etc/passwd`, `/etc/shadow`, and `/etc/ssh/sshd_config`.
+
+Controlled account-management and SSH configuration events were generated to validate the monitoring rules. Events were investigated using `ausearch`, while `aureport` was used to review summarized audit activity.
+
+Audit keys were used to categorize security events:
+
+- `identity_changes` — monitors changes to `/etc/passwd` and `/etc/shadow`
+- `ssh_config_changes` — monitors changes to `/etc/ssh/sshd_config`
+
+### Audit Rules
+
+```text
+-w /etc/passwd -p wa -k identity_changes
+-w /etc/shadow -p wa -k identity_changes
+-w /etc/ssh/sshd_config -p wa -k ssh_config_changes
+```
+
+The `-p wa` permissions monitor **write operations (`w`)** and **attribute changes (`a`)** to these files.
+
+### Security Relevance
+
+Monitoring `/etc/passwd` and `/etc/shadow` can help identify unauthorized account creation or modification, which may indicate attempts to establish persistence on a Linux system.
+
+Monitoring `/etc/ssh/sshd_config` provides visibility into changes to SSH security controls. Unauthorized modifications could potentially weaken remote-access protections, such as authentication requirements or SSH access restrictions.
+
+Together, these rules provide host-level visibility into changes affecting user identities and remote administrative access.
+
+### Validation
+
+Controlled security events were generated to confirm that the audit rules were functioning correctly.
+
+A temporary `audit-test` account was created and subsequently removed to generate identity-related events. Auditd successfully associated the resulting activity with the `identity_changes` key.
+
+The SSH configuration was also accessed during a controlled test, generating an event associated with the `ssh_config_changes` key.
+
+### Evidence
+
+Sanitized Auditd events are included in the repository:
+
+- [`auditd-identity-example.log`](logs/auditd-identity-example.log) — example identity-change detection
+- [`auditd-ssh-example.log`](logs/auditd-ssh-example.log) — example SSH configuration monitoring
+
+Runtime identifiers and other unnecessary system-specific information were removed from the published examples while retaining the security-relevant event data.

@@ -1,0 +1,6 @@
+# Monitor Linux account-related changes
+-w /etc/passwd -p wa -k identity_changes
+-w /etc/shadow -p wa -k identity_changes
+
+# Monitor SSH server configuration changes
+-w /etc/ssh/sshd_config -p wa -k ssh_config_changes

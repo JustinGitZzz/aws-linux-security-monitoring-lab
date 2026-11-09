@@ -1,0 +1,26 @@
+# Sanitized Auditd SSH Configuration Change Event
+# Controlled test: modification of the OpenSSH server configuration
+# Audit rule key: ssh_config_changes
+# Sensitive/nonessential runtime identifiers have been removed.
+
+----
+type=PROCTITLE msg=audit([TIMESTAMP]:[EVENT_ID]) :
+proctitle=nano /etc/ssh/sshd_config
+
+type=PATH msg=audit([TIMESTAMP]:[EVENT_ID]) :
+name=/etc/ssh/sshd_config
+mode=file,644
+ouid=root
+ogid=root
+nametype=NORMAL
+
+type=SYSCALL msg=audit([TIMESTAMP]:[EVENT_ID]) :
+arch=x86_64
+syscall=openat
+success=yes
+auid=[ADMIN_USER]
+uid=root
+euid=root
+comm=nano
+exe=/usr/bin/nano
+key=ssh_config_changes

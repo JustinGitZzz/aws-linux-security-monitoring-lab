@@ -1,0 +1,48 @@
+# Sanitized Auditd Identity Change Event
+# Controlled test: creation of temporary user "audit-test"
+# Audit rule key: identity_changes
+# Sensitive/nonessential runtime identifiers have been removed.
+
+----
+type=PROCTITLE msg=audit([TIMESTAMP]:[EVENT_ID]) :
+proctitle=useradd audit-test
+
+type=PATH msg=audit([TIMESTAMP]:[EVENT_ID]) :
+name=/etc/passwd
+mode=file,644
+ouid=root
+ogid=root
+nametype=NORMAL
+
+type=SYSCALL msg=audit([TIMESTAMP]:[EVENT_ID]) :
+arch=x86_64
+syscall=openat
+success=yes
+auid=[ADMIN_USER]
+uid=root
+euid=root
+comm=useradd
+exe=/usr/sbin/useradd
+key=identity_changes
+
+----
+type=PROCTITLE msg=audit([TIMESTAMP]:[EVENT_ID]) :
+proctitle=useradd audit-test
+
+type=PATH msg=audit([TIMESTAMP]:[EVENT_ID]) :
+name=/etc/shadow
+mode=file,640
+ouid=root
+ogid=shadow
+nametype=NORMAL
+
+type=SYSCALL msg=audit([TIMESTAMP]:[EVENT_ID]) :
+arch=x86_64
+syscall=openat
+success=yes
+auid=[ADMIN_USER]
+uid=root
+euid=root
+comm=useradd
+exe=/usr/sbin/useradd
+key=identity_changes
