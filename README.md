@@ -91,7 +91,13 @@ Public-key authentication  ✅
         ↓
   sudo when needed
 ```
+
+### SSH Hardened Configuration
+
 ![SSH Hardened Configuration](screenshots/ssh-hardening/ssh-hardened-config.png)
+
+### Password authentication denied
+
 ![Password authentication being denied](screenshots/ssh-hardening/password-auth-denied.png)
 
 ## AWS Security Group Hardening
@@ -185,5 +191,10 @@ The configuration provides:
 - **Controlled write access** — the chroot root remains controlled by `root`, while `sftpuser` can write only to the designated `uploads` directory.
 - **Separation of privileges** — the SFTP account cannot perform the administrative tasks available to the `ubuntu` account.
 
+### Interactive Shell Denied
+
 ![Interactive Shell Denied](screenshots/sftp/interactive-shell-denied.png)
+
+### SFTP Success
+
 ![SFTP Success](screenshots/sftp/sftp-transfer-success.png)
